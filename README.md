@@ -21,8 +21,6 @@
    - **Boost.Asio**: Used for asynchronous network operations.
    - **WebSocket++**: Provides WebSocket client functionality.
 
-For macOS, MetaTrader 5 must be run via Wine to use the compiled DLL.
-
 ---
 
 ## Installation

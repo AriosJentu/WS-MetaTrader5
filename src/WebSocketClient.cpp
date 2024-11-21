@@ -5,22 +5,22 @@
 #include <queue>
 #include <mutex>
 #include <string>
-#include <windows.h> // For wcscpy_s and other Windows functions
+#include <windows.h>
 
 using websocketpp::connection_hdl;
 typedef websocketpp::client<websocketpp::config::asio_client> client;
 
-// Stream safe queue for incoming messages
+// Thread-safe queue for messages
 std::queue<std::string> message_queue;
 std::mutex queue_mutex;
 
-// WebSocket server message handler
+// Message handler for WebSocket
 void on_message(client* c, connection_hdl hdl, websocketpp::config::asio_client::message_type::ptr msg) {
     std::lock_guard<std::mutex> lock(queue_mutex);
     message_queue.push(msg->get_payload());
 }
 
-// Connection to WebSocket server function
+// Connect to WebSocket server
 extern "C" __declspec(dllexport) void __stdcall ConnectWebSocket(const wchar_t* server_uri) {
     try {
         std::wstring ws_uri(server_uri);
@@ -34,17 +34,17 @@ extern "C" __declspec(dllexport) void __stdcall ConnectWebSocket(const wchar_t* 
         websocketpp::lib::error_code ec;
         client::connection_ptr con = ws_client.get_connection(uri, ec);
         if (ec) {
-            return; // Connection error
+            return; // Handle connection error
         }
 
         ws_client.connect(con);
         ws_client.run();
     } catch (const std::exception& e) {
-        return; //Can be handled to logging functions
+        return; // Add logging here if necessary
     }
 }
 
-// Exporting function for receiving message from queue
+// Get message from queue
 extern "C" __declspec(dllexport) void __stdcall GetMessageFromQueue(wchar_t* buffer, int buffer_size) {
     std::lock_guard<std::mutex> lock(queue_mutex);
 
@@ -56,9 +56,20 @@ extern "C" __declspec(dllexport) void __stdcall GetMessageFromQueue(wchar_t* buf
         std::wstring utf16_message = UTF8Converter::UTF8ToUTF16(utf8_message);
 
         if (utf16_message.size() >= static_cast<size_t>(buffer_size)) {
-            return; // Not enough buffer size for message
+            return; // Insufficient buffer size
         }
 
         wcscpy_s(buffer, buffer_size, utf16_message.c_str());
     }
+}
+
+// Add a greeting message
+extern "C" __declspec(dllexport) void __stdcall GetGreeting(wchar_t* buffer, int buffer_size) {
+    std::wstring greeting = L"Hello from DLL";
+
+    if (greeting.size() >= static_cast<size_t>(buffer_size)) {
+        return; // Insufficient buffer size
+    }
+
+    wcscpy_s(buffer, buffer_size, greeting.c_str());
 }

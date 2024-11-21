@@ -2,3 +2,4 @@ LIBRARY WebSocketClient
 EXPORTS
     ConnectWebSocket
     GetMessageFromQueue
+    GetGreeting

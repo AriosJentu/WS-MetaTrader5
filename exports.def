@@ -1,0 +1,4 @@
+LIBRARY WebSocketClient
+EXPORTS
+    ConnectWebSocket
+    GetMessageFromQueue

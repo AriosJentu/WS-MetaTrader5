@@ -21,6 +21,8 @@
    - **Boost.Asio**: Used for asynchronous network operations.
    - **WebSocket++**: Provides WebSocket client functionality.
 
+For macOS, MetaTrader 5 must be run via Wine to use the compiled DLL.
+
 ---
 
 ## Installation
@@ -29,6 +31,7 @@
 Follow these steps to compile the DLL:
 
 #### Install Dependencies
+Use a package manager to install required libraries. 
 Install Boost and WebSocket++ manually or via a package manager like `vcpkg`.
 
 #### Build Using CMake
@@ -111,5 +114,4 @@ Retrieves the next message from the WebSocket message queue.
 
 ## Known Limitations
 1. The buffer size for `GetMessageFromQueue` must be sufficient to hold the largest incoming message. If the buffer is too small, the message will be skipped or truncated.
-2. On macOS, the library can only be used with MetaTrader 5 running via Wine.
-3. The library does not currently support outgoing WebSocket messages (only receiving is implemented).
+2. The library does not currently support outgoing WebSocket messages (only receiving is implemented).
